@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breath Animation with Number Count</title>
+    <style>
+        body {
+            background: green;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            align-items: center;
+            justify-content: center;
+            display: flex;
+            position: relative;
+        }
+        .breath {
+            animation: scaleBreath 5.5s ease-in-out alternate-reverse infinite;
+            height: 15rem;
+            width: 15rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 0;
+        }
+        .circle {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 50%;
+            height: 50%;
+            border-radius: 50%;
+            margin: auto;
+            opacity: 0.7;
+            box-shadow: 0 -0.2rem 0.2rem rgba(0, 0, 0, 0.05);
+            animation: scaleCircle 5.5s ease-in-out alternate-reverse infinite;
+        }
+        .circle:nth-child(even) {
+            background: linear-gradient(rgba(85, 187, 231, 1), rgba(168, 213, 255, 1));
+        }
+        .circle:nth-child(odd) {
+            background: linear-gradient(rgba(76, 140, 230, 1), rgba(168, 213, 255, 1));
+        }
+        .circle:nth-of-type(1) {
+            transform: translateY(-50%);
+        }
+        .circle:nth-of-type(2) {
+            transform: translateX(35%) translateY(-35%) rotate(45deg);
+        }
+        .circle:nth-of-type(3) {
+            transform: translateX(50%) rotate(90deg);
+        }
+        .circle:nth-of-type(4) {
+            transform: translateX(35%) translateY(35%) rotate(135deg);
+        }
+        .circle:nth-of-type(5) {
+            transform: translateY(50%) rotate(180deg);
+        }
+        .circle:nth-of-type(6) {
+            transform: translateX(-35%) translateY(35%) rotate(225deg);
+        }
+        .circle:nth-of-type(7) {
+            transform: translateX(-50%) rotate(270deg);
+        }
+        .circle:nth-of-type(8) {
+            transform: translateX(-35%) translateY(-35%) rotate(315deg);
+        }
+        @keyframes scaleBreath {
+            to {
+                transform: scale(0.3);
+            }
+        }
+        @keyframes scaleCircle {
+            to {
+                transform: translateX(0) translateY(0) rotate(0);
+                opacity: 0.2;
+            }
+        }
+        .number {
+            font-size: 4rem;
+            color: white; /* Change this to white */
+            z-index: 2;
+            position: absolute;
+            animation: fadeInOut 11s ease-in-out infinite, scaleNumber 5.5s ease-in-out alternate-reverse infinite;
+        }
+        @keyframes fadeInOut {
+            0%, 50%, 100% {
+                opacity: 1;
+            }
+            45%, 55% {
+                opacity: 0;
+            }
+        }
+        @keyframes scaleNumber {
+            to {
+                transform: scale(0.3);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="breath">
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+            <div class="circle"></div>
+        </div>
+        <div id="number" class="number">1</div>
+    </div>
+
+    <!-- Include ccapture.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/ccapture.js@1.1.0/build/CCapture.all.min.js"></script>
+    <script>
+        let count = 1;
+        const numberElement = document.getElementById('number');
+
+        // Update the number after every complete animation cycle
+        setInterval(() => {
+            count = count < 30 ? count + 1 : 1;
+            numberElement.textContent = count;
+        }, 11000); // This matches the full breathing animation cycle (5.5s in + 5.5s out)
+
+        // Create a CCapture instance
+        const capturer = new CCapture({
+            format: 'webm',
+            framerate: 60,
+            verbose: true
+        });
+
+        function startCapture() {
+            capturer.start();
+            requestAnimationFrame(captureFrame);
+        }
+
+        function captureFrame() {
+            capturer.capture(document.body);
+            requestAnimationFrame(captureFrame);
+        }
+
+        function stopCapture() {
+            capturer.stop();
+            capturer.save();
+        }
+
+        // Start capturing when the page loads
+        window.onload = () => {
+            startCapture();
+
+            // Stop capturing after a certain period (e.g., 11 seconds)
+            setTimeout(stopCapture, 11000);
+        }
+    </script>
+</body>
+</html>
